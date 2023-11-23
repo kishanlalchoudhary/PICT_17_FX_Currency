@@ -31,7 +31,7 @@ let corsOptions = {
 
 // middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, "public")));
 

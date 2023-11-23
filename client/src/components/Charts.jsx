@@ -10,7 +10,7 @@ import api from "../api/api";
 import { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import { getCurrencyNames } from "../../../server/controllers/currencyControllers";
+import backgroundImage from "../assets/background.avif";
 
 ChartJs.register(CategoryScale, LinearScale, PointElement, LineElement);
 
@@ -25,13 +25,21 @@ const Charts = () => {
   const [endDate, setEndDate] = useState("");
   const [currencyNames, setCurrencyNames] = useState([]);
 
+  const mainStyle = {
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${backgroundImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    minHeight: "100vh",
+    color: "white",
+    padding: "50px",
+  };
+
   const data = {
     labels: xCoordinates,
     datasets: [
       {
         label: "First dataset",
         data: yCoordinates,
-        fill: true,
         backgroundColor: "rgba(75,192,192,0.2)",
         borderColor: "rgba(75,192,192,1)",
       },
@@ -73,8 +81,8 @@ const Charts = () => {
   const getCurrencyNames = async () => {
     try {
       const response = await api.get(`/currencyNames`);
-      setCurrencyNames(response);
-      console.log(response);
+      setCurrencyNames(response.data);
+      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -93,7 +101,7 @@ const Charts = () => {
   }, [key, currencyName, startDate, endDate]);
 
   return (
-    <>
+    <div>
       <Tabs
         id="controlled-tab-example"
         activeKey={key}
@@ -101,17 +109,19 @@ const Charts = () => {
         className="mb-3"
       >
         <Tab eventKey="duration" title="Duration">
-          <div className="w-50">
-            <div>
+          <div className="d-flex w-100 gap-10 ps-20">
+            <div className="d-flex align-items-center gap-5">
               <label htmlFor="start_date">Start Date</label>
               <input
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value), setEndDate(e.target.value);
+                }}
                 name="start_date"
               />
             </div>
-            <div>
+            <div className="d-flex align-items-center gap-5">
               <label htmlFor="end_date">End Date</label>
               <input
                 type="date"
@@ -120,9 +130,46 @@ const Charts = () => {
                 name="end_date"
               />
             </div>
+            <div className="d-flex align-items-center gap-3 w-50">
+              <select className="form-select">
+                <option value="USD">USD</option>
+              </select>
+              <select
+                value={currencyName}
+                onChange={(e) => setCurrencyName(e.target.value)}
+                className="form-select"
+              >
+                <option value="currency 2">Currency 2</option>
+                {currencyNames.map((item) => (
+                  <option key={item.currency_name} value={item.currency_name}>
+                    {item.currency_name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          {minValue && (
+            <div className="ps-20 d-flex gap-5">
+              <h5>Min Value : {minValue.conversion_rate}</h5>
+              <h5>Date :{minValue.date}</h5>
+            </div>
+          )}
+          {maxValue && (
+            <div className="ps-20 d-flex gap-5">
+              <h5>Max Value : {maxValue.conversion_rate}</h5>
+              <h5>Date : {maxValue.date}</h5>
+            </div>
+          )}
+          <div></div>
+          <Line
+            options={options}
+            data={data}
+            className="mx-auto my-7 w-75 h-75"
+          />
+        </Tab>
+        <Tab eventKey="weekly" title="Weekly">
           <div className="d-flex align-items-center gap-3 w-50">
-            <select value="USD" className="form-select">
+            <select className="form-select">
               <option value="USD">USD</option>
             </select>
             <select
@@ -131,26 +178,77 @@ const Charts = () => {
               className="form-select"
             >
               <option value="currency 2">Currency 2</option>
-              <option value="EUR">EUR</option>
-              <option value="USD">USD</option>
+              {currencyNames.map((item) => (
+                <option key={item.currency_name} value={item.currency_name}>
+                  {item.currency_name}
+                </option>
+              ))}
             </select>
           </div>
-          <Line options={options} data={data} />
-        </Tab>
-        <Tab eventKey="weekly" title="Weekly">
-          <Line options={options} data={data} />
+          <Line options={options} data={data} className="w-75 h-50 mx-auto" />
         </Tab>
         <Tab eventKey="monthly" title="Monthly">
-          <Line options={options} data={data} />
+          <div className="d-flex align-items-center gap-3 w-50">
+            <select className="form-select">
+              <option value="USD">USD</option>
+            </select>
+            <select
+              value={currencyName}
+              onChange={(e) => setCurrencyName(e.target.value)}
+              className="form-select"
+            >
+              <option value="currency 2">Currency 2</option>
+              {currencyNames.map((item) => (
+                <option key={item.currency_name} value={item.currency_name}>
+                  {item.currency_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Line options={options} data={data} className="w-75 h-50 mx-auto" />
         </Tab>
         <Tab eventKey="quarterly" title="Quarterly">
-          <Line options={options} data={data} />
+          <div className="d-flex align-items-center gap-3 w-50">
+            <select className="form-select">
+              <option value="USD">USD</option>
+            </select>
+            <select
+              value={currencyName}
+              onChange={(e) => setCurrencyName(e.target.value)}
+              className="form-select"
+            >
+              <option value="currency 2">Currency 2</option>
+              {currencyNames.map((item) => (
+                <option key={item.currency_name} value={item.currency_name}>
+                  {item.currency_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Line options={options} data={data} className="w-75 h-50 mx-auto" />
         </Tab>
         <Tab eventKey="yearly" title="Yearly">
-          <Line options={options} data={data} />
+          <div className="d-flex align-items-center gap-3 w-50">
+            <select className="form-select">
+              <option value="USD">USD</option>
+            </select>
+            <select
+              value={currencyName}
+              onChange={(e) => setCurrencyName(e.target.value)}
+              className="form-select"
+            >
+              <option value="currency 2">Currency 2</option>
+              {currencyNames.map((item) => (
+                <option key={item.currency_name} value={item.currency_name}>
+                  {item.currency_name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Line options={options} data={data} className="w-75 h-50 mx-auto" />
         </Tab>
       </Tabs>
-    </>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ const Navbar = () => {
     >
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
-          <Link className="navbar-brand" href="/">
+          <Link className="navbar-brand" to="/">
             FX-Exchange
           </Link>
           <button
@@ -25,17 +25,17 @@ const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav ms-auto">
               <li>
-                <Link className="nav-link" href="/">
+                <Link className="nav-link" to="/">
                   Home
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="/convert">
+                <Link className="nav-link" to="/convert">
                   Converter
                 </Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" href="/charts">
+                <Link className="nav-link" to="/charts">
                   Charts
                 </Link>
               </li>
